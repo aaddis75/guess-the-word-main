@@ -6,8 +6,8 @@ const remainingParagraph = document.querySelector(".remaining");
 const insideGuesses = document.querySelector("span");
 const message = document.querySelector(".message");
 const playButton = document.querySelector(".play-again");
-const word = "magnolia";
 
+const word = "magnolia";
 const guessedLetters = [];
 
 const addPlaceholders = function (word) {
@@ -31,7 +31,7 @@ guessButton.addEventListener("click", function (e) {
   console.log(guessedLetter);
 
   const validatedLetter = validateInput(guessedLetter);
-  if(validatedLetter) {
+  if (validatedLetter) {
     makeGuess(validatedLetter);
   }
 
@@ -44,11 +44,11 @@ const validateInput = function (input) {
   const acceptedLetter = /[a-zA-Z]/;
 
   if (input === "") {
-    console.log("Please enter a letter.");
+    message.innerText = "Please enter a letter.";
   } else if (input.length > 1) {
-    console.log("Please enter only one letter.");
+    message.innerText = "Please enter only one letter.";
   } else if (!input.match(acceptedLetter)) {
-    console.log("Please enter a letter.");
+    message.innerText = "Please enter a letter.";
   } else {
     return input;
   }
@@ -57,11 +57,53 @@ const validateInput = function (input) {
 const makeGuess = function (letter) {
   const uppercase = letter.toUpperCase();
   if (guessedLetters.includes(uppercase)) {
-    console.log("You already guessed that letter. Guess again!");
+    message.innerText = "You already guessed that letter. Guess again!";
     console.log(guessedLetters);
+
   } else {
     guessedLetters.push(uppercase);
+    pageUpdate();
+
+    wordInProgress(guessedLetters);
   }
 
   console.log(guessedLetters);
+};
+
+const pageUpdate = function () {
+  guessedLettersList.innerHTML = "";
+
+  guessedLetters.forEach(function (item) {
+    const listItem = document.createElement("li");
+    listItem.innerText = item;
+    guessedLettersList.appendChild(listItem);
+  });
+};
+
+const wordInProgress = function (guessedLetters) {
+  const updatedWord = [];
+  const wordUpper = word.toUpperCase();
+  const wordArray = wordUpper.split("");
+  console.log(wordArray);
+
+  wordArray.forEach(function (letter) {
+    if (guessedLetters.includes(letter)) {
+      updatedWord.push(letter);
+    } else {
+      updatedWord.push("●");
+    }
+  });
+
+  const displayWord = updatedWord.join("");
+
+  progressParagraph.innerText = displayWord;
+  checkForWin();
+
+};
+
+const checkForWin = function () {
+  if (progressParagraph.innerText === word.toUpperCase()) {
+    message.classList.add("win");
+    message.innerText = "You guessed the correct word! Congrats!";
+  }
 };
